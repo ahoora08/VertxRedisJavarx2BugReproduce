@@ -5,6 +5,9 @@ import io.vertx.reactivex.redis.client.RedisAPI;
 import io.vertx.reactivex.redis.client.RedisConnection;
 import io.vertx.redis.client.RedisOptions;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Main extends AbstractVerticle {
     private RedisConnection client;
     @Override
@@ -16,10 +19,13 @@ public class Main extends AbstractVerticle {
                     if (onConnect.succeeded()) {
                         client = onConnect.result();
                         System.out.println("Connected");
+                        RedisAPI redis = RedisAPI.api(client);
+                        redis.rxInfo(Collections.emptyList()).subscribe(res -> {
+                            System.out.println(res);
+                        });
                     }
                     else onConnect.cause();
                 });
-        RedisAPI redis = RedisAPI.api(client);
     }
 
     public static void main(String[] args) {
